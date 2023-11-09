@@ -4,7 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>실습 - submit이슈</title>
-  <script>
+  <script defer>
+    // 이벤트가 전이되는 것을 차단하기 - e.preventDefault()
+    // 테스트 시나리오
+    // e.preventDefault() 를 안했을 때 -> submit - 전송 - 새로고침이 된다.(부작용)
+    // get방식 -> query string에 사용자가 입력한 값이 올라탄다?
+    // console.log("111") - 새로고침이 되기때문에 잠깐 보여졌다 사라짐
+    // e.preventDefault() 를 했을 때 -> 볼 수 있다. 새로고침이 안일어난다.
     function login(event){
       console.log(event.target);
       console.log('로그인 호출 성공');
@@ -13,10 +19,18 @@
   </script>
 </head>
 <body>
-  <form id="f_login" method="get" action="./submitAction.html">
+  <form id="f_login" method="get" action="">
     <input type="text" name="mem_id" id="mem_id">
     <input type="button" value="로그인" onclick="login(event)">
     <button id="btnLogin">로그인2</button>
   </form>
+    <script>
+      const flogin = document.querySelector("#f_login")
+      const login2 = (event) => {
+        event.preventDefault();
+        console.log(event);
+      }
+      flogin.addEventListener("submit", login2)
+    </script>
 </body>
 </html>
