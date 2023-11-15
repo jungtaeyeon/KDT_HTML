@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head  <link rel="stylesheet" href="./picture.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+  <script>
+    startMethod = (td) => {
+      const cid = $(td).attr("id"); // 1,2,3,4
+      console.log(cid);
+      //console.log('startMethod');
+      //$("#d_pic").html("사진에 마우스가 오버되었을때");//innerHTML로 사용했던 함수
+      // GET방식 - 최초 한번은 서버에 요청하고 응답을 받아오지만 동일한 요청이 반복되면 
+      // 인터셉트를 해서 버퍼캐시메모리에 있는 응답 결과를 내보낸다.
+      // 확인할 수 있나요?? - 304 
+      // POST방식 - 브라우저로부터 인터셉트를 안당함 - 왜? body에 값이 담겨서 노출되지 않는다. -> 그래서 무조건 서버로 전달됨.
+      // 예를 들어 선물을 보낼 때 포장을 해서 줌 (안을 알 수 없음)
+      // GET방식 - 인터셉트를 당한다.
+      $.ajax({
+        type:"GET",
+        url:"pictureDtail.html?id="+cid+"&timestamp="+new Date().getTime(),
+        dataType:"html",
+        success:function(view){
+          console.log(view);
+          $("#d_pic").html(view)
+        }
+      })
+    }
+    clearMethod = () => {
+      //console.log('clearMethod');
+      //아래 함수는  jquery-1.12.4.js에서 제공함
+      //min옵션은 들여쓰기 떼고 줄바꿈 떼고 파일크기를 최소화한 파일을 말함
+      //속도차이에 영향이 있다 - 왜냐면 서버에서 클라이언트로 다운로드된 후에야 동작이 됨 - 3초안에 출력
+      $("#d_pic").html("");//html()-태그는 인터프리터 됨와 text()-태그그대로 출력됨가 있는데 
+    }
+    moveTo = () => {
+      // 아래 코드가 실행되면 새로운 페이지가 열린다. -http -stateless -비상태프로토콜
+      // 상태가 유지되지 않아서 쿠키와 세션을 공부한다 - 유지문제
+      // 기존의 요청이 끊어지므로 기존에 쥐고있던 값을 접근이 불가함
+      // 기존의 요청이 끊어지고 새로운 요청이 발생함
+      location.href = "pictureChange.html"
+    }
+  </script>
+</head>
+<body>
+  <div id="d_pic">큰사진</div>
+  <table border = "1">
+    <thead>
+      <th colspan="2">그림 목록</th>
+    </thead>
+    <tbody>
+      <tr>
+        <td id=align="center">
+          <img src="../../images/sample/회의-1.jpg" width="50" height="50" />
+        </td>
+        <td id="1" onmouseover="startMethod(this)" onmouseout="clearMethod()">
+          사진1
+        </td>
+      </tr>
+      <tr>
+        <td align="center">
+          <img src="../../images/sample/회의-2.jpg" width="50" height="50" />
+        </td>
+        <td id="2" onmouseover="startMethod(this)" onmouseout="clearMethod()">
+          사진2
+        </td>
+      </tr>
+      <tr>
+        <td align="center">
+          <img src="../../images/sample/회의-3.jpg" width="50" height="50" />
+        </td>
+        <td id="3" onmouseover="startMethod(this)" onmouseout="clearMethod()">
+          사진3
+        </td>
+      </tr>
+      <tr>
+        <td align="center">
+          <img src="../../images/sample/회의-4.jpg" width="50" height="50" />
+        </td>
+        <td id="4" onmouseover="startMethod(this)" onmouseout="clearMethod()">
+          사진4
+        </td>
+      </tr>
+    </tbody>
+  </table>  
+</body>
+</html>
