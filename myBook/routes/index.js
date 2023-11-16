@@ -15,7 +15,7 @@ router.get("/login", function (req, res, next) {
   // app.js -> path 라이브러리 __dirname, views
   res.render("index", { title: "로그인", pageName: "auth/login.ejs" });
 });
-router.get("/board/list", function (req, res, next) {
+router.get("/board", function (req, res, next) {
   // app.js -> path 라이브러리 __dirname, views
   res.render("index", { title: "글목록", pageName: "board/list.ejs" });
 });
@@ -23,7 +23,7 @@ router.get("/board/write", function (req, res, next) {
   // app.js -> path 라이브러리 __dirname, views
   res.render("index", { title: "글쓰기", pageName: "board/write.ejs" });
 });
-router.get("/board/read/:id", function (req, res, next) {
+router.get("/board/:id", function (req, res, next) {
   // app.js -> path 라이브러리 __dirname, views
   // 글을 읽어올 때는 id가 필요하니까  :id 를 붙여준다
   let id = req.params.id;
@@ -37,11 +37,7 @@ router.get("/board/update/:id", function (req, res, next) {
   // app.js -> path 라이브러리 __dirname, views
   // 글을 읽어올 때는 id가 필요하니까  :id 를 붙여준다
   let id = req.params.id;
-  res.render("index", {
-    title: "수정하기",
-    pageName: "board/update.ejs",
-    id: id,
-  });
+  res.render("index", {title: "수정하기", pageName: "board/update.ejs", id: id,});
 });
 
 module.exports = router;

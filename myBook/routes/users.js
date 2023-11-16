@@ -5,7 +5,7 @@ var router = express.Router();
 router.get("/", function (req, res, next) {
   res.send("respond with a resource");
 });
-router.get("users/join", function (req, res, next) {
+router.get("/join", function (req, res, next) {
   res.render("index", { title: "회원가입", pageName: "users/join.ejs" });
 });
 router.get("/cart", function (req, res, next) {

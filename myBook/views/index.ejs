@@ -24,6 +24,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick-theme.min.css"
     />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.js"></script>
   </head>
   <body>
     <div class="container">
@@ -33,7 +34,15 @@
           <img src="/images/loading.gif" alt="로딩이미지" />
         </div>
       </div>
+<!-- 
+  pageName은 변수이다.
+  그럼 어디서 선언되었는가?? 
+  routes 폴더에 생성된 라우팅을 담당하는 자바스크립트 파일에 선언된 변수이다.-> index.js
+ -->
+ <!-- include 안에 pageName에는 쿼테이션이 없다. 그러면 변수명 이다. 이게 board/read.ejs로도 치환 가능 -->
       <%-include(pageName)%> <%-include("footer.ejs")%>
+      <!-- 글쓰기에서 유효성 체크 후에 알림 처리 모달 추가 -->
+      <%-include("common/modal_alert.ejs")%>
     </div>
   </body>
   <script>

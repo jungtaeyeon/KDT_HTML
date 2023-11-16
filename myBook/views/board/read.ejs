@@ -1,0 +1,54 @@
+<div class="row my-5">
+  <div class="col">
+      <h1 class="text-center mb-5">글정보</h1>
+      <div class="text-end mb-2" id="btn-group" style="display:none">
+          <button class="btn btn-primary btn-sm" id="btn-update">수정</button>
+          <button class="btn btn-danger btn-sm" id="btn-delete">삭제</button>
+      </div>
+      <div id="board"></div>
+  </div>
+</div>
+
+<!--게시글정보 템플릿-->
+<script id="temp" type="text/x-handlebars-template">
+  <div class="card">
+      <div class="card-body">
+          <h5>{{ title }}</h5>
+          <div>{{ body }}</div>
+      </div>
+      <div class="card-footer">
+          Posted on <span>{{ date }}</span> by <span>{{ email }}</span>
+      </div>
+  </div>
+</script>
+
+<script type="module">
+  import { app } from '/javascripts/firebase.js';
+  import {
+    getFirestore,
+    collection,
+    addDoc, 
+    orderBy,
+    doc,
+  } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js';
+
+  import { query, where, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+  
+  const db = getFirestore(app);
+  // 파라미터로 넘긴 값을 받아올 수 있나?? - index.js -> let id = req.params.id;
+  // 자바스크립트 에서는 값에 쿼테이션이 없으면 변수명으로 취급한다. 꼭 주의하기!! 값을 넣을 때는 꼭 "" 하기!!
+  const id = "<%=id%>"
+  console.log(id);
+  // list.ejs에서 제목에 링크(/board/:id)를 걸었다. 클릭 시, routes/index.js에 등록된 이름을 따라서 호출 될
+  // 페이지이름(pageName: "board/read.ejs")을 찾아낸다. 그 다음 index.ejs에 있는
+  // include에 pageName자리에 치환된다.
+  // 한 건을 거져올때는 getDoc()을 사용하고 n건을 가져올땐 getDocs()를 사용할 것
+  // 주의!!! getDoc 앞에 반드시 await을 붙일 것!!! - async는 없지만...(제공되는 것을 쓰기때문에 없어도 가능하다.)
+  const snapshot = await getDoc(doc(db, "board", id));
+  const row = snapshot.data();
+  console.log(row);
+  // 현재 페이지에 Handlebars에 대한 링크가 없어도 SPA(싱글페이지어플리케이션)로 처리되고 있어서 참조할 수 있다.
+  // 즉 undefined가 발동하지 않는다!
+  let temp = Handlebars.compile($("#temp").html())
+  $("#board").html(temp(row));
+  </script>

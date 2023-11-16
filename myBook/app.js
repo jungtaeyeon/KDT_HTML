@@ -47,7 +47,8 @@ app.use("/users", usersRouter);
 // 응답 - 앞에 요청에 대한 처리 후 응답 페이지의 이동이나 출력 결과를 text or json형식 출력을 받아낸다
 // 내장객체이고 express가 자동 주입해준다. - (의존적) dependency injection - 클래스와 클래스, 라이브러리와 라이브러리
 // next - 다음 미들웨어로 이동할 때 꼭 필요하다
-app.use(function (req, res, next) { // 그래서 3번째 인덱스는 무조건 next
+app.use(function (req, res, next) {
+  // 그래서 3번째 인덱스는 무조건 next
   next(createError(404));
 });
 

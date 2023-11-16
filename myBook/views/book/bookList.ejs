@@ -99,7 +99,7 @@
       url: "https://dapi.kakao.com/v3/search/book?target=title",
       headers: { Authorization: "KakaoAK dab7a2fa14e99d854cd5a5757db20c79" },
       // data: { query: query, page: page, size: 6 }, // 아래와 같이 줄여써도 된다!
-      data: { query, page, size: 10 },
+      data: { query, page, size: 12 },
       dataType: "json",
       success: function (data) {
         console.log(data); // [object Object] -> JSON.stringify()

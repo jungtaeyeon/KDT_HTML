@@ -18,7 +18,13 @@
           <a class="nav-link active" aria-current="page" href="/">Home</a>
         </li>
         <li class="nav-item" id="notice">
-          <a class="nav-link active" aria-current="page" href="#">게시판</a>
+          <a class="nav-link active" aria-current="page" href="/board">게시판</a>
+        </li>
+        <li class="nav-item" id="youtube">
+          <a class="nav-link active" aria-current="page" href="/board/list">유튜브</a>
+        </li>
+        <li class="nav-item" id="movie">
+          <a class="nav-link active" aria-current="page" href="/board/list">영화</a>
         </li>
         <li class="nav-item" id="cart" style="display: none">
           <a class="nav-link active" aria-current="page" href="/users/cart"
@@ -81,6 +87,8 @@
   $("#logout").on("click", () => {
     //jquery에서 제공되는 문법으로 이벤트 처리중
     auth.signOut();
+    // 아래 코드는 location.href = "/" 를 만나면 볼 수 없다. -> 왜냐면 url주소가 바뀌니까
+    // 바뀌면 기존에 요청이 끊어지고 새로운 요청이 처리된다.
     signOut(auth)
       .then(() => {
         //콜백함수 실행
