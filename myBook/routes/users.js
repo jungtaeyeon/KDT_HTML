@@ -13,7 +13,11 @@ router.get("/cart", function (req, res, next) {
   res.render("index", { title: "장바구니", pageName: "users/cart.ejs" });
 });
 router.get("/mypage", function (req, res, next) {
-  res.render("index", { title: "마이페이지", pageName: "users/mypage.ejs" });
+  res.render("index", { title: "Mypage", pageName: "users/mypage.ejs" });
+});
+// 회원정보 수정
+router.get("/update", function (req, res, next) {
+  res.render("index", { title: "회원정보수정", pageName: "users/update.ejs" });
 });
 
 module.exports = router;
