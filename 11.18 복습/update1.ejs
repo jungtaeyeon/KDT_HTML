@@ -1,0 +1,79 @@
+<div class="row my-5">
+  <div class="col">
+      <h1 class="text-center mb-5">글수정</h1>
+      <form name="frm" method="post">
+          <input class="form-control my-2" name="title" placeholder="제목을 입력하세요.">
+          <textarea class="form-control" name="body" rows="10" placeholder="내용을 입력하세요."></textarea>
+          <div class="text-center my-2">
+              <button class="btn btn-primary">글수정</button>
+              <button class="btn btn-secondary" type="reset">수정취소</button>
+          </div>
+      </form>
+  </div>
+</div>
+<!-- 아래 write.ejs 에서 가져옴! -->
+<!-- 
+  CRUD 패턴화
+  입력: 새로쓰기 -> UI -> 입력받고 -> 저장버튼(DB연동 - await addDoc) -> 목록 페이지로 이동함(url이 바뀌는게 아닌 전환)
+  수정: 있는것을 바꿈 -> DB경유 -> UI출력 -> 수정할 내용 작성 -> 저장 버튼(DB연동 - setDoc) -> 목록 페이지 이동
+  : 추가로 생각해 볼 문제 - 내가 어디서 왔지? -> 관리함 - 이전 버튼을 눌렀을 때 내가 있던 곳으로 간다
+  삭제: 있는것을 삭제 -> 비밀번호가 있다 없다에 따라서 로직이 달라지기도 한다.[업무에 대한 프로세스에 따라]
+  : 삭제버튼 -> 정말 삭제하시겠습니까? 확인하고 -> deleteDoc호출 -> 목록페이지로 이동
+  조회: 있는것을 꺼내옴
+  : 한 건 조회 이다. -> routes > index.js -> url패턴(메소드 나눈다.) -> 
+ -->
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+<script type="module">
+  import { app } from '/javascripts/firebase.js';
+  import { getFirestore, doc, getDoc, setDoc, } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js';
+  const db = getFirestore(app);
+
+  // 사용자가 선택한 id번호를 가져온다.
+  const id = "<%=id%>";  // 반드시 쿼테이션을 붙여줘야 값으로 취급된다. 안붙으면 변수 취급당함
+  console.log(id);
+
+  let row = null;
+
+  getRow();
+  async function getRow() {
+    // 데이터를 이미지화 해서 읽고 쓴다. -> firebase database
+    const snapshot = await getDoc(doc(db, `board/${id}`));
+    row = snapshot.data();
+    console.log(row);
+    // 화면이 그려진 위치에 추가됨
+    // 화면에 db에서 꺼내온 값(val)을 초기화 해줌.
+    $(frm.title).val(row.title);
+    $(frm.body).val(row.body);
+  }
+
+  $(frm).on("submit", async(event) => {
+    event.preventDefault(); // 새로고침 사이드 이펙트 발동되는 것을 막기!!
+    $("#modal-confirm .modal-body").html("수정된 정보를 저장하시겠습니까??")
+    $("#modal-confirm").modal("show");
+    // 모달창에서 예(.btn-primary 클래스를 가진 태그) 버튼을 눌렀을 때 이벤트가 감지되고 실행문이 진행되는 거니까
+    // 즉 외부에서 호출되는 함수가 아니니까 호이스팅 걱정 없이 arrow function을 쓰면 된다.
+    $("#modal-confirm").on("click", ".btn-primary", async () => { // 수정하기 처리에 대한 콜백 함수
+      // 유효성검사 추가
+    if(title == "" || body == "") { // 이 모달창이 앞으로 보이게 처리해야함 *************************************
+      $("#modal-alert .modal-body").html("제목 또는 내용을 입력하세요!");
+      $("#modal-alert").modal("show");
+    } else{
+      await setDoc(doc(db, `board/${id}`), {
+        ...row, title, body
+      });
+      // 성공하면 목록페이지로 간다.
+      location.href = "/board"
+    }
+  });
+
+    // submit이슈 해결하기
+    $(frm).on("reset", async(event) => {
+    event.preventDefault(); 
+    getRow();
+  }) // 수정한 내용 무시하고 새로 원래 있던 데이터 가져오기
+
+    let title = $(frm.title).val(); // 사용자가 입력한 제목을 받아오기
+    let body = $(frm.body).val(); // 사용자가 입력한 내용 받아오기
+  })
+
+</script>

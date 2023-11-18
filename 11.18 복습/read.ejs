@@ -1,0 +1,83 @@
+<div class="row my-5">
+  <div class="col">
+      <h1 class="text-center mb-5">글정보</h1>
+      <div class="text-end mb-2" id="btn-group" style="display:none">
+          <button class="btn btn-primary btn-sm" id="btn-update">수정</button>
+          <button class="btn btn-danger btn-sm" id="btn-delete">삭제</button>
+      </div>
+      <div id="board"></div>
+  </div>
+</div>
+
+<!--게시글정보 템플릿-->
+<script id="temp" type="text/x-handlebars-template">
+  <div class="card">
+      <div class="card-body">
+          <h5>{{ title }}</h5>
+          <div>{{ body }}</div>
+      </div>
+      <div class="card-footer">
+          Posted on <span>{{ date }}</span> by <span>{{ email }}</span>
+      </div>
+  </div>
+</script>
+<!-- 
+  <script type="module"> </script>
+  <script type="text/javascript"> </script>  // 타입이 없으면 text/javascript 이다.
+  주의사항 - module에서 import하는 함수는 일반 script 태그에서 접근이 불가능함.
+ -->
+<script type="module">
+  import { app } from '/javascripts/firebase.js';
+  import { getFirestore, collection, doc, deleteDoc, getDoc, } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js';
+  const db = getFirestore(app);
+  // 브라우저도 캐시메모리 사용하고 있다.
+  const email = localStorage.getItem("email"); // 브라우저 localStorage에 담긴 email값을 가져옴
+
+  // 파라미터로 넘긴 값을 받아올 수 있나?? - index.js -> let id = req.params.id;
+  // 자바스크립트 에서는 값에 쿼테이션이 없으면 변수명으로 취급한다. 꼭 주의하기!! 값을 넣을 때는 꼭 "" 하기!!
+  const id = "<%=id%>" // 해커뉴스에서 hsahchange와는 다른 방식이니 구분할 것!! index.js -> let id = req.params.id; 를 가져옴!
+  console.log(id);
+  // list.ejs에서 제목에 링크(/board/:id)를 걸었다. 클릭 시, routes/index.js에 등록된 이름을 따라서 호출 될
+  // 페이지이름(pageName: "board/read.ejs")을 찾아낸다. 그 다음 index.ejs에 있는
+  // include에 pageName자리에 치환된다.
+  // 한 건을 거져올때는 getDoc()을 사용하고 n건을 가져올땐 getDocs()를 사용할 것
+  // 주의!!! getDoc 앞에 반드시 await을 붙일 것!!! - async는 없지만...(제공되는 것을 쓰기때문에 없어도 가능하다.)
+  const snapshot = await getDoc(doc(db, `board`, id));
+  // const snapshot = await getDoc(doc(db, `board/${id}`)); // 위와 같은 코드!
+  const row = snapshot.data(); // 한 건만 담고있다. 왜냐면 getDoc할 때 세번째 파라미터에 id를 넘겼으니까!
+  console.log(row);
+  // 현재 페이지에 Handlebars에 대한 링크가 없어도 SPA(싱글페이지어플리케이션)로 처리되고 있어서 참조할 수 있다.
+  // 즉 undefined가 발동하지 않는다!
+  let temp = Handlebars.compile($("#temp").html())
+  $("#board").html(temp(row));
+
+  // localStorage에 담겨있는(로그인 할 때 담김) email값과 
+  // ㄴ const email = localStorage.getItem("email"); 위에 email 변수
+  // Firestore Database에서 꺼내온 한 개 로우가 쥐고있는 email값이 같은가??
+  // 같다 -> 수정, 삭제 버튼 모두 보여줘
+  // 아니다 -> 계속 display: none 상태 유지
+  if(email == row.email){
+    $("#btn-group").toggle(); // .toggle() -> none이였으면 보이게, 보이고 있었으면 none 으로!
+  }
+
+  // 두 번째 주의사항 - arrow function(호이스팅 없다.)과 function(호이스팅이 된다.)을 잘 구분해서 사용할 것.
+  // 호이스팅 -> 전역변수처리가 되어 순서가 달라도 막 호출이 가능하다.
+  // 게시글 수정하기 구현
+  $("#btn-update").on("click", async function(){ // 비동기 처리 구간이다. -> Promise -> async or await
+    // firebase database 연동이 필요없는 상황임
+    // 수정페이지로 이동해서 수정할 내용을 작성 한 다음에 db연동이 필요하니까 페이지 이동만 처리.
+    location.href = "/board/update/"+id;
+  })
+
+  //게시글 삭제하기 구현
+  $("#btn-delete").on("click", async function(){ // 비동기 처리 구간이다. -> Promise -> async or await
+    // 너 몇 번 글 삭제할거니?
+    // NoSQL - 텍스트기반 디비이니까 - Document - 문장 - 문자열
+    if(confirm(id+"번 게시글 삭제할거니?")){ // confirm 함수 -> 자바스크립트에서 제공하는 함수
+      await deleteDoc(doc(db, `board/${id}`));
+      // 삭제가 되고 나면 목록페이지로 돌아갈게
+      location = "/board"
+    }
+  })
+
+  </script>
